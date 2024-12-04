@@ -169,6 +169,15 @@ torch::Tensor edge_grad_estimator_autocast(
       index_img)[0];
 }
 
+torch::Tensor edge_grad_estimator_backward(
+    const torch::Tensor& v_pix,
+    const torch::Tensor& img,
+    const torch::Tensor& index_img,
+    const torch::Tensor& vi,
+    const torch::Tensor& grad_outputs) {
+  return edge_grad_estimator_cuda_backward(v_pix, img, index_img, vi, grad_outputs);
+}
+
 #ifndef NO_PYBIND
 // Just so that we can import this file as a Python module to get the path and
 // import the Torch ops.
@@ -178,6 +187,8 @@ PYBIND11_MODULE(edge_grad_ext, m) {}
 TORCH_LIBRARY(edge_grad_ext, m) {
   m.def(
       "edge_grad_estimator(Tensor v_pix, Tensor v_pix_img, Tensor vi, Tensor img, Tensor index_img) -> Tensor");
+  m.def(
+    "edge_grad_estimator_backward(Tensor v_pix, Tensor img, Tensor index_img, Tensor vi, Tensor grad_outputs) -> Tensor");
 }
 
 TORCH_LIBRARY_IMPL(edge_grad_ext, Autograd, m) {
@@ -190,4 +201,5 @@ TORCH_LIBRARY_IMPL(edge_grad_ext, Autocast, m) {
 
 TORCH_LIBRARY_IMPL(edge_grad_ext, CUDA, m) {
   m.impl("edge_grad_estimator", &edge_grad_estimator_fwd);
+  m.impl("edge_grad_estimator_backward", edge_grad_estimator_backward);
 }

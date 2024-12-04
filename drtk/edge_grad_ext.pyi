@@ -12,3 +12,11 @@ def edge_grad_estimator(
     img: Tensor,
     index_img: Tensor,
 ) -> Tensor: ...
+
+def edge_grad_estimator_backward(
+    v_pix: Tensor,
+    img: Tensor,
+    index_img: Tensor,
+    vi: Tensor,
+    grad_outputs: Tensor,
+) -> Tensor: ...
