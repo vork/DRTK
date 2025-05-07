@@ -3,6 +3,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 from functools import lru_cache
 from typing import Tuple
 
@@ -18,6 +20,21 @@ def render(
     vi: th.Tensor,
     index_img: th.Tensor,
 ) -> Tuple[th.Tensor, th.Tensor]:
+    """
+    Render depth and barycentric coordinates from a mesh.
+
+    Args:
+        v: [N, V, 3] tensor of vertex positions.
+        vi: [N, F, 3] or [F, 3] tensor of triangle indices.
+
+    Returns:
+        depth_img: [N, H, W] tensor of depth values.
+        bary_img: [N, H, W, 3] tensor of barycentric coordinates.
+    """
+
+    if vi.ndim == 2:
+        vi = vi[None].expand(v.shape[0], -1, -1)
+
     depth_img, bary_img = th.ops.render_ext.render(v, vi, index_img)
     return depth_img, bary_img
 

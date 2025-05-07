@@ -3,6 +3,8 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
+# pyre-strict
+
 """
 ``drtk.interpolate`` module provides functions for differentiable interpolation of vertex
 attributes across the fragments, e.i. pixels covered by the primitive.
@@ -28,7 +30,7 @@ def interpolate(
         vert_attributes (th.Tensor):  vertex attribute tensor
             N x V x C
         vi (th.Tensor): face vertex index list tensor
-            V x 3
+            F x 3 or N x F x 3
         index_img (th.Tensor): index image tensor
             N x H x W
         bary_img (th.Tensor): 3D barycentric coordinate image tensor
@@ -42,6 +44,9 @@ def interpolate(
         For all other pixels, which had index ``-1`` in ``index_img``, the returned tensor will have non-zero
         values which should be ignored.
     """
+    if vi.ndim == 2:
+        vi = vi[None].expand(vert_attributes.shape[0], -1, -1)
+
     return th.ops.interpolate_ext.interpolate(vert_attributes, vi, index_img, bary_img)
 
 
