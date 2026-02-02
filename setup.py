@@ -9,7 +9,6 @@ import re
 import sys
 
 from pkg_resources import DistributionNotFound, get_distribution
-
 from setuptools import setup
 from torch.utils.cpp_extension import BuildExtension, CUDAExtension
 
@@ -23,7 +22,7 @@ def main(debug: bool) -> None:
         "linux": ["-std=c++17", "-Wall"]
         + (["-O0", "-g3", "-DDEBUG"] if debug else ["-O3", "--fast-math"]),
         "win32": (
-            ["/std:c++17", "/MT", "/GR-", "/EHsc", '/D "NOMINMAX"']
+            ["/MT", "/GR-", "/EHsc", '/D "NOMINMAX"']
             + (
                 ["/Od", '/D "_DEBUG"']
                 if debug
